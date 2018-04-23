@@ -10,6 +10,7 @@
 # Please see http://i3wm.org/docs/userguide.html for a complete reference!
 
 set $mod Mod4
+set $mod2 Mod2
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
@@ -26,7 +27,7 @@ font xft:Roboto Mono for Powerline 10
 # X core fonts rendering does not support right-to-left and this being a bitmap
 # font, it doesn’t scale on retina/hidpi displays.
 
-# Use Mouse+$mod to drag floating windows to their wanted position
+# Us Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
 # start a terminal
@@ -80,10 +81,10 @@ default_orientation vertical
 bindsym $mod+f fullscreen toggle
 
 # change container layout (stacked, tabbed, toggle split)
-bindsym F2 layout stacking
+# bindsym F2 layout stacking
 bindsym F3 layout toggle split
 bindsym F4 layout tabbed
-bindsym $mod+e exec "nautilus --no-desktop"
+bindsym $mod+e exec "nautilus -n"
 # toggle tiling / floating
 bindsym $mod+Shift+space floating toggle
 
@@ -92,7 +93,7 @@ bindsym $mod+space focus mode_toggle
 
 # focus the parent container
 bindsym $mod+a focus parent
-bindsym $mod+Shift+a exec "google-chrome"
+bindsym $mod+Shift+a exec "google-chrome-stable"
 
 # focus the child container
 #bindsym $mod+d focus child
@@ -107,7 +108,7 @@ bindsym $mod+6 workspace 6
 bindsym $mod+7 workspace 7
 bindsym $mod+8 workspace 8
 bindsym $mod+9 workspace 9
-bindsym $mod+0 workspace 10
+bindsym $mod+0 workspace 10 
 
 # move focused container to workspace
 bindsym $mod+Shift+1 move container to workspace 1
@@ -130,56 +131,98 @@ bindsym $mod+Shift+q exec "i3-nagbar -t warning -m 'You pressed the exit shortcu
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
-        # These bindings trigger as soon as you enter the resize mode
+# These bindings trigger as soon as you enter the resize mode
 
-        # Pressing left will shrink the window’s width.
-        # Pressing right will grow the window’s width.
-        # Pressing up will shrink the window’s height.
-        # Pressing down will grow the window’s height.
-        bindsym j resize shrink width 10 px or 10 ppt
+# Pressing left will shrink the window’s width.
+# Pressing right will grow the window’s width.
+# Pressing up will shrink the window’s height.
+# Pressing down will grow the window’s height.
+    bindsym j resize shrink width 10 px or 10 ppt
         bindsym k resize grow height 10 px or 10 ppt
         bindsym l resize shrink height 10 px or 10 ppt
         bindsym semicolon resize grow width 10 px or 10 ppt
 
-        # same bindings, but for the arrow keys
+# same bindings, but for the arrow keys
         bindsym Left resize shrink width 10 px or 10 ppt
         bindsym Down resize grow height 10 px or 10 ppt
         bindsym Up resize shrink height 10 px or 10 ppt
         bindsym Right resize grow width 10 px or 10 ppt
 
-        # back to normal: Enter or Escape
+# back to normal: Enter or Escape
         bindsym Return mode "default"
         bindsym Escape mode "default"
 }
 
 bindsym $mod+o mode "resize"
-bindsym $mod+d exec --no-startup-id /home/david/Dropbox/script/dic.sh
+bindsym $mod+d exec --no-startup-id /home/david/script/dic.sh
+bindsym XF86Display exec --no-startup-id /home/david/script/monitor.sh
 
 #　重新登录后状态栏右下将增加无线网管理图标
 exec --no-startup-id nm-applet
-exec --no-startup-id pasystray
-exec --no-startup-id "xrandr --output HDMI-1 --rotate left"
-exec "/home/david/.dropbox-dist/dropboxd"
-exec "feh --bg-scale ~/Pictures/wallpaper/Impossible\ Is\ Not\ A\ Word\ Android\ Wallpaper.jpg"
+exec --no-startup-id blueman-applet
+# exec --no-startup-id pasystray
+# exec --no-startup-id "xrandr | grep 'HDMI-1 connected' && xrandr --output HDMI-1 --primary --rotate left && xrandr --output eDP-1 --off && feh --bg-max ~/Pictures/2.jpg"
+
+workspace 1 output primary
+workspace 2 output primary
+workspace 10 output eDP1
+assign [class="^Totem"] 10
+# assign [class="^Terminator"] 2
+# exec "/home/david/.dropbox-dist/dropboxd &"
+exec "fcitx &"
+exec "/usr/lib/notification-daemon-1.0/notification-daemon start &"
+exec "xbacklight 35"
+exec "/home/david/script/monitor.sh"
+exec "/home/david/ss/ss.sh"
 
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
+    position top
+        mode dock
+        hidden_state show
+        # tray_output primary
         status_command i3status --config ~/.config/i3/i3status.conf
-        position top
-        mode hide
-        tray_output primary
 }
+for_window [class="tim.exe"] border none
+# for_window [instance="tim.exe"] floating enable
+for_window [class="qq.exe"] border none
+for_window [instance="qq.exe"] floating enable
+# bindsym Escape+Control [instance="QQ.exe"] kill
 
 # pulseaudio
-bindsym XF86AudioRaiseVolume exec --no-startup-id "pactl set-sink-volume 1 +5%"
-bindsym XF86AudioLowerVolume exec --no-startup-id "pactl set-sink-volume 1 -5%"
-bindsym XF86AudioMute exec --no-startup-id "pactl set-sink-mute 1 toggle"
-# 只是锁屏
-bindsym $mod+F12 exec "i3lock -i /home/david/Pictures/wallpaper/Yoda.png"
+# bindsym XF86AudioRaiseVolume exec --no-startup-id "pactl set-sink-volume 1 +5%"
+# bindsym XF86AudioLowerVolume exec --no-startup-id "pactl set-sink-volume 1 -5%"
+# bindsym XF86AudioMute exec --no-startup-id "pactl set-sink-mute 1 toggle"
 
+# alsa
+bindsym XF86AudioRaiseVolume exec --no-startup-id "amixer -D sysdefault sset Master 5%+"
+bindsym XF86AudioLowerVolume exec --no-startup-id "amixer -D sysdefault sset Master 5%-"
+bindsym XF86AudioMute exec --no-startup-id "amixer -D sysdefault set Master 1+ toggle"
+
+bindsym XF86MonBrightnessDown exec --no-startup-id "light -U 10"
+bindsym XF86MonBrightnessUp exec --no-startup-id "light -A 10"
+
+bindsym XF86AudioMicMute exec --no-startup-id "amixer -D sysdefault set 'Mic Boost' 1+ toggle"
+
+
+#bindsym XF86WakeUp exec --no-startup-id "xrandr --output eDP-1 --off"
+
+#bindsym XF86ScreenSaver exec --no-startup-id ""
+#bindsym XF86WebCam
+#bindsym XF86AudioMicMute
+#bindsym XF86KbdLightOnOff
+#bindsym XF86KbdBrightnessDown
+#bindsym XF86KbdBrightnessUp
+#bindsym Super_L
+#bindsym XF86WakeUp
+
+# 只是锁屏
+bindsym F12 exec "i3lock -i /home/david/Pictures/lock.png"
 # 锁屏 + 休眠
-bindsym $mod+F11 exec "i3lock && systemctl suspend"
+bindsym $mod+F12 exec "i3lock && systemctl suspend"
+
+bindsym XF86TouchpadToggle exec "/home/david/script/toggleTouchpad.sh"
 # 全屏截图
 bindsym --release Print exec "scrot -b -m /tmp/screenshot.png && xclip -selection clipoard -t 'image/png' /tmp/screenshot.png"
 # 截取当前窗口
@@ -187,6 +230,9 @@ bindsym --release $mod+Print exec "scrot -u -b -m /tmp/screenshot.png && xclip -
 # 鼠标选择区域
 bindsym --release $mod+Shift+Print exec "scrot -s -b -m /tmp/screenshot.png && xclip -selection clipoard -t 'image/png' /tmp/screenshot.png"
 # QQ 风格的截屏快捷键
-bindsym --release Control+Mod1+A exec "scrot -s -b -m /tmp/screenshot.png && xclip -selection clipoard -t 'image/png' /tmp/screenshot.png"
+bindsym --release Control+Mod2+A exec "scrot -s -b -m /tmp/screenshot.png && xclip -selection clipoard -t 'image/png' /tmp/screenshot.png"
 
+# disable_randr15 yes
 no_focus [class="fcitx"]
+# This file has been auto-generated by i3-config-wizard(1).
+# It will not be overwritten, so edit it as you like.
